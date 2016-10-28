@@ -1,7 +1,7 @@
 Camera = class("Camera")
 Camera.pos_x = 0
 Camera.pos_y = 0
-Camera.speed = 10
+Camera.speed = 100
 
 function Camera:ctor(parent)
 	-- body
@@ -26,24 +26,22 @@ end
 function Camera:update(dt)
 	-- body
 	local distance = dt*Camera.speed
-	printInfo("camera move distance distance:%f",distance)
+	--printInfo("camera move distance distance:%f",distance)
 
 	if math.abs(self.m_target_pos.x - self.m_pos.x) > distance then
 
-		-- if self.m_target_pos.x > self.m_pos.x then
-		-- 	self.m_pos.x = self.m_pos.x + distance
-		-- else
-		-- 	self.m_pos.x = self.m_pos.x - distance
-		-- end
-
-		printInfo("camera move x:%f y:%f",self.m_pos.x,self.m_pos.x)
+		if self.m_target_pos.x > self.m_pos.x then
+			self.m_pos.x = self.m_pos.x + distance
+		else
+			self.m_pos.x = self.m_pos.x - distance
+		end
 
 	end
 
 	if math.abs(self.m_target_pos.y - self.m_pos.y) > distance then
 
 		if self.m_target_pos.y > self.m_pos.y then
-			self.m_pos.x = self.m_pos.x + distance
+			self.m_pos.y = self.m_pos.y + distance
 		else
 			self.m_pos.y = self.m_pos.y - distance
 		end

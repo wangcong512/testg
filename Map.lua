@@ -1,5 +1,6 @@
 Map = class("Map",cc.Node)
-
+Map.CellWidth = 32
+Map.RenderWidth = 256
 function Map:ctor()
  	-- body
  	self.m_total_time = 10
@@ -11,6 +12,10 @@ function Map:ctor()
  	self.m_map_height = 0
 
  	self.m_total_time = 10
+
+ 	self.m_map_data = MapData.create()
+
+ 	self.touch_listener = cc.EventListenerTouchOneByOne.create()
 
 
  	--init
