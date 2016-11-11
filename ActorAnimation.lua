@@ -1,28 +1,35 @@
 ActorAnimation = class("ActorAnimation",cc.ActionInterval)
 
-ActorAnimation.ActionType = {}
-ActorAnimation.ActionType.MoveDown = 1
-ActorAnimation.ActionType.MoveDownLeft = 2
-ActorAnimation.ActionType.MoveLeft = 3
-ActorAnimation.ActionType.MoveLeftUp = 4
-ActorAnimation.ActionType.MoveUp = 5
-ActorAnimation.ActionType.MoveRightUp = 6
-ActorAnimation.ActionType.MoveRight = 7
-ActorAnimation.ActionType.MoveRightDown = 8
+ActorAnimation.DirType = {}
+ActorAnimation.DirType.MoveDown = 1
+ActorAnimation.DirType.MoveDownLeft = 2
+ActorAnimation.DirType.MoveLeft = 3
+ActorAnimation.DirType.MoveLeftUp = 4
+ActorAnimation.DirType.MoveUp = 5
+ActorAnimation.DirType.MoveRightUp = 6
+ActorAnimation.DirType.MoveRight = 7
+ActorAnimation.DirType.MoveRightDown = 8
 
 
 ActorAnimation.BodyParts = {}
 ActorAnimation.BodyParts.Cloth = 1
 ActorAnimation.BodyParts.Weapon = 2
+ActorAnimation.BodyParts.Mount = 3
+ActorAnimation.BodyParts.Wing = 4
 
 
 function ActorAnimation.create()
 	-- body
-	self.m_sprite = display.newSprite()
+	self.m_cloth = display.newSprite()
+	self.m_weapon = display.newSprite()
+	self.m_mount = display.newSprite()
+	self.m_wing = display.newSprite()
+
 	self.m_frames = 0
 	self.m_cur_frame = 1
 	self.m_kf = 0
 	self.m_frames = {}
+
 
 	self.m_action_id = 1
 
@@ -46,7 +53,7 @@ function ActorAnimation:load(res_name)
             res_queue = res_queue - 1
             if res_queue == 0 then
                	self.m_frames = {}
-                for k,v in pairs(ActorAnimation.ActionType) do
+                for k,v in pairs(ActorAnimation.DirType) do
                 	self.m_frames[v] = {}
                 	for i = 1,10 do
 	                	local frame = cc.SpriteFrameCache:getInstance():getSpriteFrame(string.format("%s_%d_%d.png",path_info.basename,v,i))
@@ -80,13 +87,20 @@ end
 
 function ActorAnimation:update(dt)
 	-- body
-	self.m_frames[self.m_action_id] = self.m_frames[self.m_action_id] or {}
-	self.m_sprite:setSpriteFrame(self.m_frames[self.m_action_id][self.m_cur_frame])
+
+	for i=1,#ActorAnimation.BodyParts do
+		self.m_frames[i] = self.m_frames[i] or {}
+		self.m_frames[self.m_action_id] = self.m_frames[self.m_action_id] or {}
+		self.m_sprite:setSpriteFrame(self.m_frames[i][self.m_action_id][self.m_cur_frame])
+	end
+
+
+
 end
 
 function ActorAnimation:changeState(action_id)
 	-- body
-	if action_id > #ActorAnimation.ActionType then
+	if action_id > #ActorAnimation.DirType then
 		printInfo("ActorAnimation:changeState eror action_id:%d",action_id)
 	else
 		self.m_action_id = action_id
