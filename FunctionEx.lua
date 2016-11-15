@@ -30,3 +30,13 @@ function newSet()
     }})
 
 end
+
+function table.reverse(t)
+  -- body
+    local temp = {}
+
+    for i=#t,1,-1 do
+      table.insert(temp,t[i])
+    end
+    return temp
+end

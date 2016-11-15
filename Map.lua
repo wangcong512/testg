@@ -29,6 +29,8 @@ function Map:ctor()
  	-- body
  	self.m_total_time = 10
  	self.m_hero = Actor.create()
+ 	
+ 	self.m_hero:setPosition(ccp(200,200))
 
  	self.m_camera = Camera.create(self)
 
@@ -43,6 +45,9 @@ function Map:ctor()
  	self:onCreate()
  	self:initTouch()
 
+ 	self:add(self.m_hero)
+
+
  
 end 
 
@@ -53,7 +58,8 @@ function Map:initTouch()
     local function onTouchBegan(touch, event)  
         printInfo("onTouchBegan")
         --printInfo("x:%d,y:%d",touch:getLocation().x,touch:getLocation().y)
-          
+         
+        self.m_hero:getPathAIMgr():addPathByPt(touch:getLocation())  
         return true  
     end  
       
@@ -134,8 +140,10 @@ function Map:update(dt)
 	-- end
 
 	self.m_camera:update(dt)
-	
+	if self.m_hero then self.m_hero:update(dt) end
 
+
+	
 end
 
 function Map:ajustPosition()
