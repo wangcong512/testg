@@ -57,9 +57,10 @@ function Map:initTouch()
  	--触屏事件  
     local function onTouchBegan(touch, event)  
         printInfo("onTouchBegan")
-        --printInfo("x:%d,y:%d",touch:getLocation().x,touch:getLocation().y)
+        local touch_pos =  self:convertToNodeSpace(touch:getLocation())
+        printInfo("x:%d,y:%d",touch_pos.x,touch_pos.y)
          
-        self.m_hero:getPathAIMgr():addPathByPt(touch:getLocation())  
+        self.m_hero:getPathAIMgr():addPathByPt(touch_pos)  
         return true  
     end  
       
@@ -119,6 +120,7 @@ function Map:initMap()
 
 	self.m_map_width = size.width
 	self.m_map_height = size.height
+	self:setContentSize(size)
 
 
 end
@@ -141,6 +143,10 @@ function Map:update(dt)
 
 	self.m_camera:update(dt)
 	if self.m_hero then self.m_hero:update(dt) end
+
+	Map.getInstance().m_camera.m_target_pos.x = self.m_hero:getPositionX() - self.m_camera.m_width/2
+	Map.getInstance().m_camera.m_target_pos.y = self.m_hero:getPositionY() - self.m_camera.m_height/2
+
 
 
 	

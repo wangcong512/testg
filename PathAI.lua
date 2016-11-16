@@ -51,9 +51,9 @@ end
 function PathAI:addPath(path)
 	-- body
 	path = path or {}
-	self.m_path = table.reverse(path)
+	self.m_path = path--table.reverse(path)
 
-
+	dump(self.m_path)
 	self.m_src = Map.convertPixel2Cell(self.m_parent:getPosition3D().x,self.m_parent:getPosition3D().y)
 	self.m_dst = self.m_path[#self.m_path]
 	self.m_dst_pixel = Map.convertCell2Pixel(self.m_dst.x,self.m_dst.y)
@@ -66,6 +66,7 @@ function PathAI:addPath(path)
 
 
 end
+
 
 function PathAI:update(dt)
 	-- body
@@ -93,6 +94,7 @@ function PathAI:update(dt)
 			
 			--没有路径走的时候停止
 			self.m_is_move = self:toNextNode()
+			return
 
 		else
 
@@ -100,6 +102,9 @@ function PathAI:update(dt)
 	else
 		if self.m_start_pos.x < self.m_dst_pixel.x then
 			--self.m_start_pos.x = self.m_dst_pixel.x
+			--self.m_is_move = self:toNextNode()
+			self.m_is_move = self:toNextNode()
+			return
 		else
 
 		end
@@ -111,12 +116,17 @@ function PathAI:update(dt)
 
 		if self.m_start_pos.y > self.m_dst_pixel.y then
 			--self.m_start_pos.y = self.m_dst_pixel.y
+			self.m_is_move = self:toNextNode()
+			return
+
 		else
 
 		end
 	else
 		if self.m_start_pos.y < self.m_dst_pixel.y then
 			--self.m_start_pos.y = self.m_dst_pixel.y
+			self.m_is_move = self:toNextNode()
+			return
 		else
 
 		end
@@ -164,10 +174,64 @@ function PathAI:toNextNode()
 	if #self.m_path <= 0 then return false end
 
 	self.m_dst = self.m_path[#self.m_path]
+	printInfo("toNext_node index:%d x:%d y:%d",#self.m_path,self.m_dst.x,self.m_dst.y)
 	self.m_dst_pixel = Map.convertCell2Pixel(self.m_dst.x,self.m_dst.y)
 	local dis_vector = cc.pSub(self.m_dst,self.m_src)
 	self.m_normalize = cc.pNormalize(dis_vector)
 	self.m_angle = math.acos(cc.pNormalize(dis_vector).x)
-
+	self:changeDir()
 	return true
+end
+
+function PathAI:changeDir()
+	-- body
+
+	--pi/8   0.3927
+	--pi3/8  1.1781
+	--pi5/8  1.9635
+	--pi7/8  2.7489
+	--pi9/8  3.5343  
+	--pi11/8 4.3197 
+	--pi13/8 5.1051 
+	--pi15/8 5.8905 
+	--pi17/8 6.6759
+
+	local pi_1_8 =  0.3927
+	local pi_3_8 =  1.1781
+	local pi_5_8 =  1.9635
+	local pi_7_8 =  2.7489
+	local pi_9_8 =  3.5343  
+	local pi_11_8 = 4.3197   
+	local pi_13_8 = 5.1051 
+	local pi_15_8 = 5.8905 
+	local pi_17_8 = 6.6759
+	local pi_19_8 = -0.3927
+
+
+	local dir = ActorAnimation.DirType.MoveDown
+
+
+	if self.m_angle > pi_19_8  and  self.m_angle <= pi_1_8 then
+		dir = ActorAnimation.DirType.MoveRightDown
+	elseif self.m_angle > pi_1_8  and  self.m_angle <= pi_3_8 then
+		dir = ActorAnimation.DirType.MoveRight
+	elseif self.m_angle > pi_3_8  and  self.m_angle <= pi_7_8 then
+		dir = ActorAnimation.DirType.MoveRightUp
+	elseif self.m_angle > pi_7_8  and  self.m_angle <= pi_9_8 then
+		dir = ActorAnimation.DirType.MoveUp
+	elseif self.m_angle > pi_9_8  and  self.m_angle <= pi_11_8 then
+		dir = ActorAnimation.DirType.MoveLeftUp
+	elseif self.m_angle > pi_11_8  and  self.m_angle <= pi_13_8 then
+		dir = ActorAnimation.DirType.MoveLeft
+	elseif self.m_angle > pi_13_8  and  self.m_angle <= pi_15_8 then
+		dir = ActorAnimation.DirType.MoveDownLeft
+	elseif self.m_angle > pi_15_8  and  self.m_angle <= pi_17_8 then
+		dir = ActorAnimation.DirType.MoveDown
+	else
+
+	end
+
+
+
+	self.m_parent:changeDir(dir)
 end
