@@ -178,7 +178,7 @@ function PathAI:toNextNode()
 	self.m_dst_pixel = Map.convertCell2Pixel(self.m_dst.x,self.m_dst.y)
 	local dis_vector = cc.pSub(self.m_dst,self.m_src)
 	self.m_normalize = cc.pNormalize(dis_vector)
-	self.m_angle = math.acos(cc.pNormalize(dis_vector).x)
+	self.m_angle = cc.pToAngleSelf(self.m_normalize)
 	self:changeDir()
 	return true
 end
@@ -200,38 +200,45 @@ function PathAI:changeDir()
 	local pi_3_8 =  1.1781
 	local pi_5_8 =  1.9635
 	local pi_7_8 =  2.7489
-	local pi_9_8 =  3.5343  
-	local pi_11_8 = 4.3197   
-	local pi_13_8 = 5.1051 
-	local pi_15_8 = 5.8905 
-	local pi_17_8 = 6.6759
-	local pi_19_8 = -0.3927
+	local _pi_7_8 = -2.7489 --3.5343  
+	local _pi_5_8 = -1.9635 --4.3197   
+	local _pi_3_8 = -1.1781--5.1051 
+	local _pi_1_8 = -0.3927--6.6759
+
 
 
 	local dir = ActorAnimation.DirType.MoveDown
 
 
-	if self.m_angle > pi_19_8  and  self.m_angle <= pi_1_8 then
-		dir = ActorAnimation.DirType.MoveRightDown
-	elseif self.m_angle > pi_1_8  and  self.m_angle <= pi_3_8 then
+	if self.m_angle > _pi_1_8  and  self.m_angle <= pi_1_8 then
+
 		dir = ActorAnimation.DirType.MoveRight
-	elseif self.m_angle > pi_3_8  and  self.m_angle <= pi_7_8 then
+	elseif self.m_angle > pi_1_8  and  self.m_angle <= pi_3_8 then
+		
 		dir = ActorAnimation.DirType.MoveRightUp
-	elseif self.m_angle > pi_7_8  and  self.m_angle <= pi_9_8 then
+	elseif self.m_angle > pi_3_8  and  self.m_angle <= pi_5_8 then
+		
 		dir = ActorAnimation.DirType.MoveUp
-	elseif self.m_angle > pi_9_8  and  self.m_angle <= pi_11_8 then
+	elseif self.m_angle > pi_5_8  and  self.m_angle <= pi_7_8 then
+		
 		dir = ActorAnimation.DirType.MoveLeftUp
-	elseif self.m_angle > pi_11_8  and  self.m_angle <= pi_13_8 then
+	elseif self.m_angle > pi_7_8  or  self.m_angle <= _pi_7_8 then
+		
 		dir = ActorAnimation.DirType.MoveLeft
-	elseif self.m_angle > pi_13_8  and  self.m_angle <= pi_15_8 then
+	elseif self.m_angle > _pi_7_8  and  self.m_angle <= _pi_5_8 then
+		
 		dir = ActorAnimation.DirType.MoveDownLeft
-	elseif self.m_angle > pi_15_8  and  self.m_angle <= pi_17_8 then
+	elseif self.m_angle > _pi_5_8  and  self.m_angle <= _pi_3_8 then
+		
 		dir = ActorAnimation.DirType.MoveDown
+	elseif self.m_angle > _pi_3_8  and  self.m_angle <= _pi_1_8 then
+		
+		dir = ActorAnimation.DirType.MoveRightDown
 	else
 
 	end
 
-
+	printInfo("move_dir %s,angle:%f",dir,self.m_angle)
 
 	self.m_parent:changeDir(dir)
 end
